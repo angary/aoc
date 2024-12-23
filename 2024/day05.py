@@ -1,5 +1,6 @@
 import functools
 
+
 def build_order_map(ordering: list[list[int]]) -> dict[int, set[int]]:
     order_map = {}
     for (v, k) in ordering:
