@@ -1,4 +1,4 @@
-use std::{collections::HashSet, error::Error, fs};
+use std::{collections::HashSet, error::Error};
 
 fn task(string: String, seq_size: usize) -> usize {
     string
@@ -19,9 +19,8 @@ fn task_2(string: String) -> usize {
     task(string, 14)
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let data = fs::read_to_string("input.txt")?;
-    println!("task 1: {}", task_1(data.clone()));
-    println!("task 2: {}", task_2(data));
+pub fn main(input: String) -> Result<(), Box<dyn Error>> {
+    println!("task 1: {}", task_1(input.clone()));
+    println!("task 2: {}", task_2(input));
     Ok(())
 }

@@ -1,4 +1,4 @@
-use std::{error::Error, fs};
+use std::error::Error;
 
 fn score(c: char) -> i32 {
     c as i32
@@ -18,6 +18,7 @@ fn task_1(lines: &[String]) -> i32 {
         })
         .sum()
 }
+
 fn task_2(lines: &[String]) -> i32 {
     lines
         .chunks(3)
@@ -30,9 +31,9 @@ fn task_2(lines: &[String]) -> i32 {
         })
         .sum()
 }
-fn main() -> Result<(), Box<dyn Error>> {
-    let text = fs::read_to_string("input.txt")?;
-    let lines: Vec<String> = text.split('\n').map(String::from).collect();
+
+pub fn main(input: String) -> Result<(), Box<dyn Error>> {
+    let lines: Vec<String> = input.split('\n').map(String::from).collect();
     println!("task 1: {}", task_1(&lines));
     println!("task 2: {}", task_2(&lines));
     Ok(())

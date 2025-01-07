@@ -1,4 +1,4 @@
-use std::{error::Error, fs};
+use std::error::Error;
 
 type TwoRanges = (u32, u32, u32, u32);
 
@@ -10,9 +10,8 @@ fn task_2((a0, a1, b0, b1): &&TwoRanges) -> bool {
     u32::min(*a1, *b1) >= u32::max(*a0, *b0)
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let text = fs::read_to_string("input.txt")?;
-    let data: Vec<TwoRanges> = text
+pub fn main(input: String) -> Result<(), Box<dyn Error>> {
+    let data: Vec<TwoRanges> = input
         .split('\n')
         .map(|s| {
             let x: Vec<u32> = s

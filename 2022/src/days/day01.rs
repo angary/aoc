@@ -1,14 +1,15 @@
-use std::{cmp::Reverse, error::Error, fs};
+use std::{cmp::Reverse, error::Error};
+
 fn task_1(calories: &[u32]) -> u32 {
     calories[0]
 }
+
 fn task_2(calories: &[u32]) -> u32 {
     calories.iter().take(3).sum::<u32>()
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let text = fs::read_to_string("input.txt")?;
-    let mut calories = text
+pub fn main(input: String) -> Result<(), Box<dyn Error>> {
+    let mut calories = input
         .split("\n\n")
         .map(|s| {
             s.split('\n')
