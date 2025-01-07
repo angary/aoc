@@ -1,10 +1,14 @@
 use std::{collections::VecDeque, error::Error};
+use regex::Regex;
 
-fn parse_crates(s: &[String], n: usize, height: usize) -> Vec<VecDeque<char>> {
-    let mut crates: Vec<VecDeque<char>> = vec![VecDeque::new(); n];
-    for i in (0..height).rev() {
-        for (j, stack) in crates.iter_mut().enumerate().take(n) {
-            let c = s[i].chars().nth(1 + j * 4).unwrap();
+type Move = (usize, usize, usize);
+
+fn parse_crates(crate_lines: &[String], n: usize) -> Vec<VecDeque<char>> {
+    let mut crates = vec![VecDeque::new(); n];
+    for line in crate_lines.iter().rev() {
+        for (i, stack) in crates.iter_mut().enumerate() {
+            let index = 1 + i * 4;
+            let c = line.chars().nth(index).unwrap();
             if c != ' ' {
                 stack.push_back(c);
             }
@@ -13,21 +17,23 @@ fn parse_crates(s: &[String], n: usize, height: usize) -> Vec<VecDeque<char>> {
     crates
 }
 
-fn parse_moves(data: &[String]) -> Vec<(usize, usize, usize)> {
-    data.iter()
-        .map(|s| {
-            let x: Vec<&str> = s.split(' ').collect();
-            let nums: Vec<usize> = vec![x[1], x[3], x[5]]
-                .iter()
-                .map(|num| num.parse::<usize>().unwrap())
-                .collect();
-            (nums[0], nums[1] - 1, nums[2] - 1)
+fn parse_moves(move_instructions: &[String]) -> Result<Vec<Move>, Box<dyn Error>> {
+    let move_regex = Regex::new(r"move (\d+) from (\d+) to (\d+)")?;
+    let moves = move_instructions.iter()
+        .filter_map(|line| {
+            move_regex.captures(line).map(|caps| {
+                let amount = caps[1].parse::<usize>().unwrap();
+                let from = caps[2].parse::<usize>().unwrap() - 1; // convert to 0-indexed
+                let to = caps[3].parse::<usize>().unwrap() - 1; // convert to 0-indexed
+                (amount, from, to)
+            })
         })
-        .collect()
+        .collect();
+    Ok(moves)
 }
 
-fn task_1(crates: &Vec<VecDeque<char>>, moves: &Vec<(usize, usize, usize)>) -> String {
-    let mut clone = crates.clone();
+fn task_1(crates: &[VecDeque<char>], moves: &[Move]) -> String {
+    let mut clone = crates.to_owned();
     for (amount, a, b) in moves {
         // Move 'amount' from 'a' to 'b'
         for _ in 0..*amount {
@@ -37,11 +43,11 @@ fn task_1(crates: &Vec<VecDeque<char>>, moves: &Vec<(usize, usize, usize)>) -> S
             }
         }
     }
-    String::from_iter(clone.iter().map(|v| *v.back().unwrap()))
+    clone.iter().filter_map(|v| v.back()).collect()
 }
 
-fn task_2(crates: &Vec<VecDeque<char>>, moves: &Vec<(usize, usize, usize)>) -> String {
-    let mut clone = crates.clone();
+fn task_2(crates: &[VecDeque<char>], moves: &[Move]) -> String {
+    let mut clone = crates.to_owned();
     for (amount, a, b) in moves {
         // Move 'amount' from 'a' to 'b'
         let mut moved: VecDeque<char> = VecDeque::new();
@@ -53,16 +59,20 @@ fn task_2(crates: &Vec<VecDeque<char>>, moves: &Vec<(usize, usize, usize)>) -> S
         }
         clone[*b].append(&mut moved)
     }
-    String::from_iter(clone.iter().map(|v| *v.back().unwrap()))
+    clone.iter().filter_map(|v| v.back()).collect()
 }
 
 pub fn main(input: String) -> Result<(), Box<dyn Error>> {
-    let text: Vec<String> = input.split('\n').map(String::from).collect();
+    let text: Vec<String> = input.lines().map(String::from).collect();
     let index = text.iter().position(|s| s.starts_with(" 1")).unwrap();
-    let n_str = text[index].split("   ").last().unwrap();
+    let crate_lines = &text[0..index];
+    let move_lines = &text[index + 2..];
+
+    let n_str = text[index].split_whitespace().last().unwrap();
     let n = n_str.trim().parse().unwrap();
-    let crates = parse_crates(&text[0..index], n, index);
-    let moves = parse_moves(&text[index + 2..text.len()]);
+    let crates = parse_crates(crate_lines, n);
+    let moves = parse_moves(move_lines)?;
+
     println!("task 1: {}", task_1(&crates, &moves));
     println!("task 2: {}", task_2(&crates, &moves));
     Ok(())

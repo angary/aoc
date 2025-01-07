@@ -12,7 +12,7 @@ fn task_2((a0, a1, b0, b1): &&TwoRanges) -> bool {
 
 pub fn main(input: String) -> Result<(), Box<dyn Error>> {
     let data: Vec<TwoRanges> = input
-        .split('\n')
+        .lines()
         .map(|s| {
             let x: Vec<u32> = s
                 .split(&[',', '-'])
