@@ -78,6 +78,7 @@ def task2(grid: list[str], start: tuple[int, int]) -> int:
             grid[i] = string
     return count
 
+
 def get_next_position_optimised(
     pos: tuple[int, int],
     direction: int,

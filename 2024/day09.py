@@ -53,6 +53,7 @@ def task2(disk_map: str) -> int:
                     break
     return checksum(disk)
     
+
 def main():
     with open("input.txt") as f:
         disk_map = f.readline()
