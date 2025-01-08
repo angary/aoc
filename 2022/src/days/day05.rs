@@ -1,5 +1,5 @@
-use std::{collections::VecDeque, error::Error};
 use regex::Regex;
+use std::{collections::VecDeque, error::Error};
 
 type Move = (usize, usize, usize);
 
@@ -19,7 +19,8 @@ fn parse_crates(crate_lines: &[String], n: usize) -> Vec<VecDeque<char>> {
 
 fn parse_moves(move_instructions: &[String]) -> Result<Vec<Move>, Box<dyn Error>> {
     let move_regex = Regex::new(r"move (\d+) from (\d+) to (\d+)")?;
-    let moves = move_instructions.iter()
+    let moves = move_instructions
+        .iter()
         .filter_map(|line| {
             move_regex.captures(line).map(|caps| {
                 let amount = caps[1].parse::<usize>().unwrap();
