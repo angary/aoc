@@ -5,7 +5,7 @@ type DirectoryRef = Rc<RefCell<Directory>>;
 #[derive(Clone)]
 struct Directory {
     dirs: HashMap<String, DirectoryRef>,
-    files: HashMap<String, usize>,
+    files: HashMap<String, u32>,
     parent: Option<DirectoryRef>,
 }
 
@@ -18,13 +18,13 @@ impl Directory {
         }))
     }
 
-    fn get_size(&self) -> usize {
-        self.files.values().sum::<usize>()
+    fn get_size(&self) -> u32 {
+        self.files.values().sum::<u32>()
             + self
                 .dirs
                 .values()
                 .map(|dir| dir.borrow().get_size())
-                .sum::<usize>()
+                .sum::<u32>()
     }
 
     fn iter(&self) -> DirectoryIterator {
@@ -81,18 +81,18 @@ fn add_directory_or_file(curr: &mut DirectoryRef, line: &str) {
         let new_dir = Directory::new(Some(Rc::clone(curr)));
         curr.borrow_mut().dirs.insert(String::from(name), new_dir);
     } else {
-        let file_size: usize = first.parse().expect("failed to parse file size");
+        let file_size: u32 = first.parse().expect("failed to parse file size");
         curr.borrow_mut()
             .files
             .insert(String::from(name), file_size);
     }
 }
 
-fn task1(sizes: &[usize]) -> usize {
+fn task1(sizes: &[u32]) -> u32 {
     sizes.iter().filter(|&&size| size <= 100_000).sum()
 }
 
-fn task2(sizes: &[usize]) -> usize {
+fn task2(sizes: &[u32]) -> u32 {
     let used_bytes = sizes.iter().max().unwrap();
     let free_space_needed = used_bytes - 40_000_000;
     *sizes
@@ -104,7 +104,7 @@ fn task2(sizes: &[usize]) -> usize {
 
 pub fn main(input: String) -> Result<(), Box<dyn Error>> {
     let directory = parse_directory(&input);
-    let sizes: Vec<usize> = directory
+    let sizes: Vec<u32> = directory
         .borrow()
         .iter()
         .map(|d| d.borrow().get_size())
