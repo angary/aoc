@@ -28,6 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         "08" => days::day08::main(text),
         "09" => days::day09::main(text),
         "10" => days::day10::main(text),
+        "11" => days::day11::main(text),
         _ => Err(format!("Couldn't find the day: {}", args.day).into())
     }
 }
