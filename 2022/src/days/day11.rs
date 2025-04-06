@@ -35,7 +35,13 @@ fn parse_operation(line: &str) -> Box<dyn Fn(i64) -> i64> {
 }
 
 fn parse_test(divisor: i64, true_monkey: usize, false_monkey: usize) -> Box<dyn Fn(i64) -> usize> {
-    Box::new(move |x| if x % divisor == 0 { true_monkey } else { false_monkey })
+    Box::new(move |x| {
+        if x % divisor == 0 {
+            true_monkey
+        } else {
+            false_monkey
+        }
+    })
 }
 
 fn parse_monkeys(input: &str) -> (Vec<Monkey>, i64) {
@@ -59,10 +65,9 @@ fn parse_monkeys(input: &str) -> (Vec<Monkey>, i64) {
     (monkeys, lcm)
 }
 
-fn simulate(monkeys: &Vec<Monkey>, lcm: i64, rounds: usize, divisor: i64) -> usize {
+fn simulate(monkeys: &[Monkey], lcm: i64, rounds: usize, divisor: i64) -> usize {
     let mut items: Vec<Vec<i64>> = monkeys.iter().map(|m| m.items.clone()).collect();
     let mut inspections = vec![0; monkeys.len()];
-    
     for _ in 0..rounds {
         for (i, monkey) in monkeys.iter().enumerate() {
             inspections[i] += items[i].len();
@@ -77,7 +82,7 @@ fn simulate(monkeys: &Vec<Monkey>, lcm: i64, rounds: usize, divisor: i64) -> usi
 
 pub fn main(input: String) -> Result<(), Box<dyn Error>> {
     let (monkeys, lcm) = parse_monkeys(&input);
-    println!("task1: {}", simulate(&monkeys, lcm, 20, 3));
-    println!("task2: {}", simulate(&monkeys, lcm, 10_000, 1));
+    println!("task 1: {}", simulate(&monkeys, lcm, 20, 3));
+    println!("task 2: {}", simulate(&monkeys, lcm, 10_000, 1));
     Ok(())
 }
